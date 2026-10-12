@@ -1,14 +1,28 @@
-INTERNED MOVIES — versión inicial
+INTERNED MOVIES — INSTRUCCIONES
 
-Incluye interfaz adaptable a celular, catálogo consultado desde Internet Archive, búsqueda, ordenamiento, fichas y reproductor HTML5. No requiere clave TMDB para arrancar.
+Qué hace este proyecto:
+- Carga automáticamente películas populares, series, anime, portadas, sinopsis, puntuaciones y reparto desde TMDB.
+- Permite buscar títulos y ver fichas de detalle.
+- Abre tráileres oficiales de YouTube cuando TMDB los informa.
+- Diseño adaptable a celulares.
 
-IMPORTANTE: usa la colección feature_films de Internet Archive. No garantiza películas recientes, doblaje latino, reproducción para todos los títulos ni exactitud de los datos de derechos. Internet Archive advierte que la información de derechos aportada por quienes suben archivos puede ser incorrecta o incompleta. Revisá cada ficha y licencia antes de redistribuir, descargar o alojar una película. Esta app reproduce desde la fuente externa y no aloja los videos.
+IMPORTANTE:
+1. Este catálogo NO contiene los archivos de las películas completas. La información de una película no es lo mismo que tener permiso para transmitirla.
+2. Para reproducir películas completas, agregá únicamente videos que tengas derecho a distribuir, por ejemplo contenido propio, de dominio público o con licencia.
+3. TMDB exige atribución y sus términos distinguen el uso no comercial del comercial. Revisá https://developer.themoviedb.org/docs/faq antes de publicar o monetizar.
+4. La app muestra esta atribución en la sección de configuración/aviso del sitio: “This product uses the TMDB API but is not endorsed or certified by TMDB.”
+5. La API Key se guarda en el navegador del dispositivo. Para un sitio público real, es más seguro mover las llamadas a un backend y no publicar una clave privada.
 
-PUBLICAR GRATIS CON GITHUB PAGES:
-1. Descomprimí el ZIP.
-2. Subí index.html, style.css, app.js y README.txt a la raíz de un repositorio GitHub.
-3. Entrá a Settings > Pages.
-4. Elegí Deploy from a branch, rama main y carpeta /(root), y guardá.
-5. Esperá la publicación. Si el navegador bloquea la API pública, hará falta un backend/proxy autorizado.
+CÓMO USARLO DESDE EL CELULAR:
+1. Extraé el ZIP en tu teléfono o subí los archivos a un repositorio GitHub.
+2. Para publicarlo gratis como sitio: en GitHub, abrí el repositorio → Settings → Pages → Deploy from a branch → elegí main y /root → Save.
+3. Abrí el sitio publicado. Tocá el engranaje ⚙.
+4. Creá una cuenta en https://www.themoviedb.org/ y solicitá una API Key en https://www.themoviedb.org/settings/api.
+5. Pegá la API Key v3 en INTERNED MOVIES y tocá “Guardar y cargar catálogo”.
 
-Esta versión no integra TMDB. Si se añade luego, revisá sus términos vigentes y agrega la atribución requerida.
+Nota: TMDB indica que la solicitud de API no está optimizada para móviles; si te cuesta desde Android, probá en Chrome con “Sitio para computadora”.
+
+Archivos:
+- index.html: estructura de la app.
+- style.css: diseño visual.
+- app.js: llamadas a la API y funcionamiento.

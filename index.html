@@ -1,1 +1,62 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#090711"><title>INTERNED MOVIES</title><link rel="stylesheet" href="style.css"></head><body><header><a class="brand" href="#">IM <span>INTERNED <b>MOVIES</b><small>CINE PARA DESCUBRIR</small></span></a><label class="status">● CATÁLOGO GRATIS</label></header><main><section class="hero"><div><p class="eyebrow">TU PRÓXIMA PELÍCULA TE ESPERA</p><h1>Una historia.<br><em>Un mundo.</em></h1><p>Explorá películas gratuitas de archivos abiertos. Buscá títulos, revisá su ficha y reproducí cuando exista un archivo compatible.</p><a class="btn" href="#catalogo">▶ EXPLORAR PELÍCULAS</a><small>El idioma y los derechos varían según cada película.</small></div><div class="art"><i></i><i></i><i></i></div></section><section id="catalogo"><div class="head"><div><p class="eyebrow">DESCUBRÍ ALGO NUEVO</p><h2>Explorar catálogo</h2></div><span id="count">Cargando…</span></div><div class="tools"><input id="search" placeholder="⌕ Buscar una película…"><select id="sort"><option value="popular">Más populares</option><option value="title">Título A–Z</option><option value="year">Año más reciente</option></select><button id="reload">↻ Actualizar</button></div><p class="notice"><b>Importante:</b> el catálogo procede de fuentes externas. No todos los títulos tienen español latino ni reproducción disponible. Revisá los derechos en la ficha original antes de redistribuir una película.</p><div id="grid" class="grid"><p>Buscando películas…</p></div><button id="more" class="btn more" hidden>Cargar más</button></section></main><footer><b>INTERNED <em>MOVIES</em></b><p>Proyecto independiente, no afiliado a Internet Archive ni a TMDB.</p><p>Los videos se solicitan a la fuente original; no se alojan en este sitio.</p><a href="https://archive.org/details/feature_films" target="_blank">Abrir colección original ↗</a></footer><div id="modal" class="modal"><div class="backdrop" id="close"></div><article class="dialog"><button id="x" class="x">×</button><div id="player"></div><div class="info"><p class="eyebrow">FICHA DE PELÍCULA</p><h2 id="mtitle"></h2><p id="meta"></p><p id="desc"></p><div class="actions"><button class="btn" id="play">▶ Reproducir aquí</button><a class="secondary" id="source" target="_blank">Abrir fuente original ↗</a></div><small>Verificá idioma y licencia en la ficha original.</small></div></article></div><script src="app.js"></script></body></html>
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#090b12">
+<title>INTERNED MOVIES</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><span class="brand-mark">IM</span><div><strong>INTERNED</strong><small>MOVIES</small></div></div>
+  <button id="settingsBtn" class="icon-btn" aria-label="Configuración">⚙</button>
+</header>
+<main>
+  <section class="hero" id="hero">
+    <div class="hero-content">
+      <span class="eyebrow">TU PRÓXIMA HISTORIA EMPIEZA ACÁ</span>
+      <h1>Descubrí algo<br><em>increíble.</em></h1>
+      <p>Películas, series y anime en un solo lugar.</p>
+      <button id="heroExplore" class="primary">Explorar catálogo</button>
+    </div>
+  </section>
+  <section class="search-wrap">
+    <form id="searchForm"><span>⌕</span><input id="searchInput" placeholder="Buscar películas, series..." autocomplete="off"><button type="submit">Buscar</button></form>
+  </section>
+  <nav class="tabs" aria-label="Categorías">
+    <button class="tab active" data-kind="movie">Películas</button>
+    <button class="tab" data-kind="tv">Series</button>
+    <button class="tab" data-kind="anime">Anime</button>
+  </nav>
+  <div id="notice" class="notice">Conectá tu clave gratuita de TMDB en ⚙ para cargar el catálogo.</div>
+  <section class="section">
+    <div class="section-head"><div><span class="eyebrow">PARA VOS</span><h2 id="sectionTitle">Populares ahora</h2></div><button id="refreshBtn" class="text-btn">Actualizar ↻</button></div>
+    <div id="grid" class="movie-grid"></div>
+  </section>
+  <section class="section">
+    <div class="section-head"><div><span class="eyebrow">LO MEJOR</span><h2>Mejor valoradas</h2></div></div>
+    <div id="topGrid" class="movie-grid compact"></div>
+  </section>
+  <footer>INTERNED MOVIES <span>•</span> Datos e imágenes: <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">TMDB</a> • Este producto utiliza la API de TMDB, pero no está avalado ni certificado por TMDB.</footer>
+</main>
+
+<div id="settingsModal" class="modal hidden">
+  <div class="modal-card">
+    <button id="closeSettings" class="close" aria-label="Cerrar">×</button>
+    <span class="eyebrow">CONFIGURACIÓN</span><h2>Conectar catálogo</h2>
+    <p>Ingresá tu API Key de TMDB para cargar automáticamente títulos, pósters, sinopsis y puntuaciones.</p>
+    <label for="apiKey">TMDB API Key (v3)</label>
+    <input id="apiKey" class="key-input" placeholder="Pegá acá tu API Key">
+    <button id="saveKey" class="primary full">Guardar y cargar catálogo</button>
+    <p class="fine">La API Key está configurada para esta versión. Como el sitio es público, la clave puede verse en el código; regenerala en TMDB si fue expuesta. Para uso comercial, consultá la licencia de TMDB.</p>
+    <a href="https://www.themoviedb.org/settings/api" target="_blank" rel="noopener">Obtener API Key en TMDB ↗</a>
+  </div>
+</div>
+
+<div id="detailModal" class="modal hidden">
+  <div class="detail-card"><button id="closeDetail" class="close" aria-label="Cerrar">×</button><div id="detailContent"></div></div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
