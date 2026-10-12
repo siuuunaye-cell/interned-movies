@@ -63,11 +63,15 @@ async function openDetail(id,type){
   const name=titleOf(data), poster=posterUrl(data.poster_path), year=yearOf(data);
   const cast=(data.credits?.cast||[]).slice(0,5).map(x=>x.name).join(", ");
   const trailer=(data.videos?.results||[]).find(v=>v.site==="YouTube"&&v.type==="Trailer");
-  $("#detailContent").innerHTML=`<div class="detail-layout">${poster?`<img src="${poster}" alt="${escapeHtml(name)}">`:""}<div><span class="eyebrow">${type==="tv"?"SERIE":"PELÍCULA"}</span><h2>${escapeHtml(name)}</h2><div class="detail-meta">★ ${Number(data.vote_average||0).toFixed(1)} · ${year} · ${data.runtime?data.runtime+" min":(data.episode_run_time?.[0]?data.episode_run_time[0]+" min por episodio":"Duración no disponible")}</div><p>${escapeHtml(data.overview||"Sin sinopsis disponible en español.")}</p><p><b>Reparto:</b> ${escapeHtml(cast||"No disponible")}</p><div class="detail-actions">${trailer?`<button class="primary" id="trailerBtn">▶ Ver tráiler aquí</button>`:""}</div><div id="trailerPlayer"></div><p class="detail-note">El tráiler se reproduce dentro de INTERNED MOVIES. La disponibilidad de películas completas depende de fuentes autorizadas.</p></div></div>`;
+  
+  $("#detailContent").innerHTML=`<div class="detail-layout">${poster?`<img src="${poster}" alt="${escapeHtml(name)}">`:""}<div><span class="eyebrow">${type==="tv"?"SERIE":"PELÍCULA"}</span><h2>${escapeHtml(name)}</h2><div class="detail-meta">★ ${Number(data.vote_average||0).toFixed(1)} · ${year} · ${data.runtime?data.runtime+" min":(data.episode_run_time?.[0]?data.episode_run_time[0]+" min por episodio":"Duración no disponible")}</div><p>${escapeHtml(data.overview||"Sin sinopsis disponible en español.")}</p><p><b>Reparto:</b> ${escapeHtml(cast||"No disponible")}</p><div class="detail-actions">${trailer?`<button class="primary" id="trailerBtn">▶ Ver tráiler aquí</button>`:""}</div><p class="detail-note">Esta ficha muestra información y tráileres disponibles. La disponibilidad de películas completas depende de fuentes autorizadas.</p></div></div>`;
   if(trailer)$("#trailerBtn").onclick=()=>{
-    const player=$("#trailerPlayer");
-    player.innerHTML=`<div class="trailer-frame"><iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(trailer.key)}?autoplay=1&rel=0" title="Tráiler de ${escapeHtml(name)}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>`;
-    player.scrollIntoView({behavior:"smooth",block:"nearest"});
+   const player=document.createElement("div");
+   player.className="trailer-player";
+   player.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(trailer.key)}?autoplay=1&rel=0" title="Tráiler de ${escapeHtml(name)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
+   const old=$("#detailContent .trailer-player"); if(old)old.remove();
+   $("#detailContent").appendChild(player);
+   player.scrollIntoView({behavior:"smooth",block:"center"});
   };
  }catch(e){$("#detailContent").innerHTML=`<div class="empty"><strong>No pudimos abrir el título</strong>${escapeHtml(e.message)}</div>`;}
 }
