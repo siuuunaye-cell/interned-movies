@@ -3,7 +3,7 @@ INTERNED MOVIES — INSTRUCCIONES
 Qué hace este proyecto:
 - Carga automáticamente películas populares, series, anime, portadas, sinopsis, puntuaciones y reparto desde TMDB.
 - Permite buscar títulos y ver fichas de detalle.
-- Abre tráileres oficiales de YouTube cuando TMDB los informa.
+- Reproduce los tráileres de YouTube dentro de la ficha usando un reproductor integrado (YouTube no debe abrirse como página separada).
 - Diseño adaptable a celulares.
 
 IMPORTANTE:
