@@ -26,3 +26,18 @@ Archivos:
 - index.html: estructura de la app.
 - style.css: diseño visual.
 - app.js: llamadas a la API y funcionamiento.
+
+
+CONEXIÓN CON SUPABASE (persistencia en la nube)
+1. app.js ya está preparado con la URL del proyecto y la clave PUBLICABLE.
+2. En Supabase > SQL Editor, ejecutá el contenido de SUPABASE_POLICIES.sql.
+3. En Supabase > Authentication > Users, creá un usuario con tu email y contraseña. No uses claves secretas en el sitio.
+4. Subí index.html, app.js, style.css y SUPABASE_POLICIES.sql (el SQL solo se ejecuta en Supabase) al repositorio GitHub, reemplazando los archivos anteriores.
+5. Abrí tu sitio publicado, tocá Admin, iniciá sesión con el usuario que creaste y agregá títulos y enlaces autorizados.
+6. Las películas se guardan en Supabase y se muestran a todos los visitantes. La sesión de administrador se mantiene solo en esa pestaña/sesión.
+
+IMPORTANTE:
+- La clave publicable puede estar en el frontend; nunca publiques una sb_secret_ ni service_role.
+- Las políticas permiten escribir a cualquier usuario autenticado de Supabase. Por eso no crees cuentas para visitantes; creá solo tu cuenta de administrador.
+- Los enlaces de video deben ser de contenido propio, de dominio público o que tengas permiso para distribuir.
+- El catálogo TMDB continúa funcionando aparte; Supabase guarda las películas que agregás manualmente.

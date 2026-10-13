@@ -1,4 +1,7 @@
 const API_BASE = "https://api.themoviedb.org/3";
+const SUPABASE_URL = "https://vxbdczcrrxzcvrogoxld.supabase.co";
+const SUPABASE_PUBLIC_KEY = "sb_publishable_x1XU3EXEzdM9oNRyQbA6Ug_iXjVAr7Z";
+let adminToken = sessionStorage.getItem("im_admin_token") || "";
 const IMG_BASE = "https://image.tmdb.org/t/p/w500";
 const $ = (s) => document.querySelector(s);
 const DEFAULT_API_KEY = "e09d89d37d2ee0d297fe0e05b0f4ea91";
@@ -27,6 +30,63 @@ async function api(path,extra={}){
  return response.json();
 }
 function setNotice(text){notice.textContent=text;}
+async function sb(path, options={}) {
+ const headers={"apikey":SUPABASE_PUBLIC_KEY,"Content-Type":"application/json",...(options.headers||{})};
+ if(adminToken) headers.Authorization="Bearer "+adminToken;
+ const r=await fetch(`${SUPABASE_URL}/rest/v1/${path}`,{...options,headers});
+ if(!r.ok) { const t=await r.text(); throw new Error(`Supabase (${r.status}): ${t.slice(0,220)}`); }
+ if(r.status===204) return null;
+ return r.json();
+}
+async function loadCustomMovies(){
+ const el=$("#customGrid");
+ try{
+  const rows=await sb("movies?select=id,title,video_url,poster_url,genre,release_year,description,created_at&order=created_at.desc");
+  el.innerHTML=(rows||[]).map(m=>`<article class="movie-card custom-card" data-custom-id="${m.id}">
+    <div class="poster">${m.poster_url?`<img loading="lazy" src="${escapeHtml(m.poster_url)}" alt="${escapeHtml(m.title)}" onerror="this.style.display='none'">`:""}<span class="rating">NUEVO</span></div>
+    <h3>${escapeHtml(m.title)}</h3><div class="meta">${escapeHtml(m.release_year||"")}${m.genre?" · "+escapeHtml(m.genre):""}</div>
+    <button class="primary play-custom" data-video="${encodeURIComponent(m.video_url)}" data-title="${escapeHtml(m.title)}">▶ Reproducir</button>
+    ${adminToken?`<button class="text-btn delete-custom" data-id="${m.id}">Eliminar</button>`:""}
+  </article>`).join("") || '<div class="empty">Todavía no hay películas agregadas.</div>';
+  el.querySelectorAll(".play-custom").forEach(b=>b.onclick=()=>playCustom(decodeURIComponent(b.dataset.video),b.dataset.title));
+  el.querySelectorAll(".delete-custom").forEach(b=>b.onclick=()=>deleteCustom(b.dataset.id));
+ }catch(e){el.innerHTML='<div class="empty">No se pudo cargar el catálogo guardado. Revisá las políticas de Supabase.</div>';console.error(e);}
+}
+function playCustom(url,title){
+ const isYT=/youtube\.com|youtu\.be/.test(url);
+ const isVimeo=/vimeo\.com/.test(url);
+ let embed=url;
+ if(isYT){let id="";try{const u=new URL(url);id=u.hostname.includes("youtu.be")?u.pathname.slice(1):(u.searchParams.get("v")||u.pathname.split("/").filter(Boolean).pop());}catch{} embed="https://www.youtube-nocookie.com/embed/"+encodeURIComponent(id);}
+ else if(isVimeo){const id=url.match(/vimeo\.com\/(?:video\/)?(\d+)/)?.[1];if(id)embed="https://player.vimeo.com/video/"+id;}
+ $("#detailModal").classList.remove("hidden");
+ $("#detailContent").innerHTML=`<h2>${escapeHtml(title)}</h2><div class="trailer-frame custom-video">${isYT||isVimeo?`<iframe src="${escapeHtml(embed)}" title="${escapeHtml(title)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`:`<video controls autoplay playsinline src="${escapeHtml(url)}"></video>`}</div>`;
+}
+async function deleteCustom(id){
+ if(!confirm("¿Eliminar esta película del catálogo compartido?"))return;
+ try{await sb(`movies?id=eq.${encodeURIComponent(id)}`,{method:"DELETE",headers:{"Prefer":"return=minimal"}});await loadCustomMovies();}
+ catch(e){alert("No se pudo eliminar: "+e.message);}
+}
+$("#adminBtn").onclick=()=>{$("#adminPanel").classList.toggle("hidden");$("#adminPanel").scrollIntoView({behavior:"smooth",block:"start"});};
+$("#loginForm").addEventListener("submit",async e=>{
+ e.preventDefault(); const status=$("#adminStatus");status.textContent="Iniciando sesión…";
+ try{
+  const r=await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`,{method:"POST",headers:{"apikey":SUPABASE_PUBLIC_KEY,"Content-Type":"application/json"},body:JSON.stringify({email:$("#adminEmail").value.trim(),password:$("#adminPassword").value})});
+  const data=await r.json();if(!r.ok)throw new Error(data.msg||data.message||"Email o contraseña incorrectos.");
+  adminToken=data.access_token;sessionStorage.setItem("im_admin_token",adminToken);
+  $("#loginForm").classList.add("hidden");$("#movieForm").classList.remove("hidden");status.textContent="Sesión iniciada. Podés guardar o eliminar películas.";
+  await loadCustomMovies();
+ }catch(err){status.textContent=err.message;}
+});
+$("#logoutBtn").onclick=()=>{adminToken="";sessionStorage.removeItem("im_admin_token");$("#loginForm").classList.remove("hidden");$("#movieForm").classList.add("hidden");loadCustomMovies();};
+$("#movieForm").addEventListener("submit",async e=>{
+ e.preventDefault();const status=$("#adminStatus");status.textContent="Guardando…";
+ try{
+  const payload={title:$("#movieTitle").value.trim(),video_url:$("#movieVideo").value.trim(),poster_url:$("#moviePoster").value.trim()||null,genre:$("#movieGenre").value.trim()||null,release_year:$("#movieYear").value?Number($("#movieYear").value):null,description:$("#movieDescription").value.trim()||null};
+  await sb("movies",{method:"POST",headers:{"Prefer":"return=minimal"},body:JSON.stringify(payload)});
+  status.textContent="¡Película guardada en la nube!";e.target.reset();await loadCustomMovies();
+ }catch(err){status.textContent="No se pudo guardar: "+err.message;}
+});
+
 async function loadCatalog(){
  if(!apiKey){showEmpty(grid,"Conectá el catálogo","Tocá ⚙ arriba y pegá tu API Key de TMDB.");showEmpty(topGrid,"Todavía no hay títulos","Cuando conectes TMDB aparecerán títulos populares.");setNotice("Falta conectar TMDB. La app carga los pósters y datos automáticamente con tu clave.");return;}
  loading(grid,10);loading(topGrid,5);
@@ -83,3 +143,4 @@ $("#refreshBtn").onclick=()=>loadCatalog();
 $("#heroExplore").onclick=()=>document.querySelector(".tabs").scrollIntoView({behavior:"smooth"});
 document.addEventListener("click",e=>{const c=e.target.closest(".movie-card");if(c)openDetail(c.dataset.id,c.dataset.type);});
 loadCatalog();
+loadCustomMovies();

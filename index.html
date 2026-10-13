@@ -10,7 +10,7 @@
 <body>
 <header class="topbar">
   <div class="brand"><span class="brand-mark">IM</span><div><strong>INTERNED</strong><small>MOVIES</small></div></div>
-  <button id="settingsBtn" class="icon-btn" aria-label="Configuración">⚙</button>
+  <button id="settingsBtn" class="icon-btn" aria-label="Configuración">⚙</button><button id="adminBtn" class="icon-btn" aria-label="Administración">Admin</button>
 </header>
 <main>
   <section class="hero" id="hero">
@@ -30,6 +30,28 @@
     <button class="tab" data-kind="anime">Anime</button>
   </nav>
   <div id="notice" class="notice">Conectá tu clave gratuita de TMDB en ⚙ para cargar el catálogo.</div>
+  <section class="section" id="customSection">
+    <div class="section-head"><div><span class="eyebrow">TU CATÁLOGO</span><h2>Películas agregadas</h2></div></div>
+    <div id="customGrid" class="movie-grid"></div>
+  </section>
+  <section class="section hidden" id="adminPanel">
+    <div class="section-head"><div><span class="eyebrow">ADMINISTRADOR</span><h2>Gestionar películas</h2></div><button id="logoutBtn" class="text-btn">Cerrar sesión</button></div>
+    <form id="loginForm" class="admin-form">
+      <label>Email administrador</label><input id="adminEmail" type="email" autocomplete="username" required placeholder="Tu email de Supabase">
+      <label>Contraseña</label><input id="adminPassword" type="password" autocomplete="current-password" required placeholder="Contraseña">
+      <button class="primary" type="submit">Iniciar sesión</button>
+    </form>
+    <form id="movieForm" class="admin-form hidden">
+      <label>Título</label><input id="movieTitle" required>
+      <label>Enlace de video autorizado (MP4/WebM/YouTube/Vimeo)</label><input id="movieVideo" type="url" required placeholder="https://...">
+      <label>URL de portada (opcional)</label><input id="moviePoster" type="url" placeholder="https://...">
+      <label>Género</label><input id="movieGenre" placeholder="Acción, terror...">
+      <label>Año</label><input id="movieYear" type="number" min="1900" max="2100">
+      <label>Descripción</label><textarea id="movieDescription" rows="3"></textarea>
+      <button class="primary" type="submit">Guardar película en la nube</button>
+    </form>
+    <p id="adminStatus" class="fine">Para administrar, iniciá sesión con un usuario creado en Supabase Authentication.</p>
+  </section>
   <section class="section">
     <div class="section-head"><div><span class="eyebrow">PARA VOS</span><h2 id="sectionTitle">Populares ahora</h2></div><button id="refreshBtn" class="text-btn">Actualizar ↻</button></div>
     <div id="grid" class="movie-grid"></div>
